@@ -58,7 +58,7 @@ setup(
         'pytest'
     ],
     extras_require={
-        'dev': ['nose', 'coveralls', 'pylint', 'coverage', 'mock']
+        'dev': ['pytest-cov', 'pylint']
     },
 
     project_urls={  # Optional
