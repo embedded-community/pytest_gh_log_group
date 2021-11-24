@@ -29,9 +29,11 @@ jobs:
           pip install .
           pip install .[dev]
       - name: run tests
-        run: python -m pytest --cov source --cov-report=html .
-      - name: pylint (always pass)
-        run: pylint --exit-zero source
+        env:
+          GITHUB_ACTIONS: 1
+        run: python -m pytest -s --cov source --cov-report=html .
+      - name: pylint
+        run: pylint source
       - name: Archive code coverage results
         uses: actions/upload-artifact@v2
         with:

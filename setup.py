@@ -51,8 +51,7 @@ setup(
     keywords="py.test pytest github actions log grouping",
     python_requires='>=3.7, <4',
     entry_points={
-        'pytest11': ['builds = source.plugin']
-
+        'pytest11': ['pytest_gh_log_group = source.plugin']
     },
     install_requires=[
         'pytest'
