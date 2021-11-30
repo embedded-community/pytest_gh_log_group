@@ -31,7 +31,7 @@ jobs:
       - name: run tests
         env:
           GITHUB_ACTIONS: 1
-        run: python -m pytest -s --cov source --cov-report=html .
+        run: python -m pytest -s --no-header -v --cov source --cov-report=html .
       - name: pylint
         run: pylint source
       - name: Archive code coverage results
