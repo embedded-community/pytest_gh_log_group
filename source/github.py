@@ -4,7 +4,7 @@ import os
 def gh_print(command: str, value: str = "") -> None:
     """ Github command prints"""
     if os.getenv('GITHUB_ACTIONS') is not None:
-        print(f'\n::{command}::{value}') # flush=True
+        print(f'::{command}::{value}')  # flush=True
 
 
 def start_github_group(name: str, prefix="", postfix="") -> None:

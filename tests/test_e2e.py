@@ -24,4 +24,5 @@ def test_sample2(session_setup, test_setup):
 
 
 def test_fail():
+    pytest.xfail(reason='testing failure')
     assert False, 'failed'
