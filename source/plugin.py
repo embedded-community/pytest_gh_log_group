@@ -23,7 +23,7 @@ def pytest_runtest_logreport(report: TestReport):  # pylint: disable=unused-argu
 @pytest.hookimpl(tryfirst=True)
 def pytest_runtest_setup(item) -> None:
     """
-    Start group "TestName SETUP"
+    Start group "TEST TestName SETUP"
     """
     start_github_group(item.name, prefix="TEST", postfix="SETUP")
 
@@ -31,7 +31,7 @@ def pytest_runtest_setup(item) -> None:
 @pytest.hookimpl(tryfirst=True)
 def pytest_runtest_teardown(item) -> None:
     """
-    Start group "TestName TEARDOWN"
+    Start group "TEST TestName TEARDOWN"
     """
     start_github_group(item.name, prefix="TEST", postfix="TEARDOWN")
 
