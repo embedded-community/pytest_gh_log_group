@@ -1,9 +1,51 @@
 """
 Pytest plugin for github action log grouping.
 """
+import os
+from collections import Callable
 import pytest
+from _pytest.config import _strtobool
+from _pytest.config import Config
 from _pytest.reports import TestReport
-from .github import start_github_group, end_github_group
+from _pytest.main import Session
+from _pytest.config.argparsing import Parser
+from .github import Github
+
+
+TERMINAL_REPORT = None
+
+
+def pytest_addoption(parser: Parser) -> None:
+    group = parser.getgroup("pytest_gh_log_group")
+    group.addoption(
+        "--gh_log_group",
+        action="store_true",
+        dest="gh_log_group",
+        default=_strtobool(os.getenv('GITHUB_ACTIONS')),
+        help="Time in milliseconds when the print was invoked, relative to the time the fixture was created.",
+    )
+
+
+@pytest.hookimpl(trylast=True)
+def pytest_configure(config: Config):
+    pytest.grouping_session = create(config)
+
+
+def create(config: Config) -> Github:
+    if config.getoption("gh_log_group"):
+        terminal_reporter = config.pluginmanager.getplugin("terminalreporter")
+        return Github(reporter=terminal_reporter)
+    return Github(reporter=None)
+
+
+@pytest.hookimpl(tryfirst=True)
+def pytest_collection(session: Session):  # pylint: disable=unused-argument
+    pytest.grouping_session.start_github_group('collector')
+
+
+@pytest.hookimpl(trylast=True)
+def pytest_collection_finish(session):  # pylint: disable=unused-argument
+    pytest.grouping_session.end_github_group()
 
 
 @pytest.hookimpl(tryfirst=True)
@@ -11,13 +53,13 @@ def pytest_runtest_call(item) -> None:
     """
     Start group "TestName TEST"
     """
-    start_github_group(item.name, prefix="TEST")
+    pytest.grouping_session.start_github_group(item.name, prefix="TEST")
 
 
 @pytest.hookimpl(tryfirst=True)
 def pytest_runtest_logreport(report: TestReport):  # pylint: disable=unused-argument
     """ end group between tests/setups/teardown phases"""
-    end_github_group()
+    pytest.grouping_session.end_github_group()
 
 
 @pytest.hookimpl(tryfirst=True)
@@ -25,15 +67,15 @@ def pytest_runtest_setup(item) -> None:
     """
     Start group "TEST TestName SETUP"
     """
-    start_github_group(item.name, prefix="TEST", postfix="SETUP")
+    pytest.grouping_session.start_github_group(item.name, prefix="TEST", postfix="SETUP")
 
 
-@pytest.hookimpl(tryfirst=True)
+@pytest.hookimpl(trylast=True)
 def pytest_runtest_teardown(item) -> None:
     """
     Start group "TEST TestName TEARDOWN"
     """
-    start_github_group(item.name, prefix="TEST", postfix="TEARDOWN")
+    pytest.grouping_session.start_github_group(item.name, prefix="TEST", postfix="TEARDOWN")
 
 
 @pytest.hookimpl(hookwrapper=True, tryfirst=True)
@@ -53,7 +95,7 @@ def pytest_fixture_setup(request, fixturedef) -> None:
             fixture_type = 'PARAMETER'
             fixture_name = f'{fixture_name} {request_param}'
 
-    start_github_group(prefix=fixture_type,
+    pytest.grouping_session.start_github_group(prefix=fixture_type,
                        name=fixture_name,
                        postfix='SETUP')
 
@@ -61,14 +103,5 @@ def pytest_fixture_setup(request, fixturedef) -> None:
     # end of finalizers list (--> executed first)
     yield
 
-    end_github_group()
+    pytest.grouping_session.end_github_group()
 
-    def fixture_finalizer():
-        """
-        Start group for fixture finalization (teardown)
-        """
-        #start_github_group(prefix=fixture_type,
-        #                   name=fixture_name,
-        #                   postfix=f'TEARDOWN')
-
-    fixturedef.addfinalizer(fixture_finalizer)
