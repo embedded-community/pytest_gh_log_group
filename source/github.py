@@ -10,11 +10,12 @@ class Github:
         # GitHub doesn't support nested grouping so this ensures we do not have any.
         self._group_activated = False
 
-    def gh_print(self, command: str, value: str = "") -> None:
+    def write_command(self, command: str, value: str = "") -> None:
         """ Github command prints"""
         self.write_line(f'::{command}::{value}')
 
     def write_line(self, data: str):
+        """ write line using reporter """
         if self._reporter:
             self._reporter.write_line(data, flush=True)
 
@@ -27,7 +28,7 @@ class Github:
             return
 
         value = (prefix + " " + name + " " + postfix).strip(" ")
-        self.gh_print('group', value)
+        self.write_command('group', value)
         self._group_activated = True
 
     def end_github_group(self) -> None:
@@ -37,5 +38,5 @@ class Github:
         if not self._group_activated:
             # GitHub doesn't support nested grouping
             return
-        self.gh_print('endgroup')
+        self.write_command('endgroup')
         self._group_activated = False
