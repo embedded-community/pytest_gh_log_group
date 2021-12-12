@@ -49,13 +49,10 @@ setup(
     entry_points={
         'pytest11': ['pytest_gh_log_group = source.plugin']
     },
-    install_requires=[
-        'pytest'
-    ],
+    install_requires=['pytest'],
     extras_require={
         'dev': ['pytest-cov', 'pylint']
     },
-
     project_urls={  # Optional
         'Source': 'https://github.com/embedded-community/pytest_gh_log_group',
     }
