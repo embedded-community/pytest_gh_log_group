@@ -35,5 +35,5 @@ class Github:
         if not self._active_group:
             # GitHub doesn't support nested grouping
             return
-        self.write_command('endgroup', self._active_group)
+        self.write_command('endgroup')
         self._active_group = None
