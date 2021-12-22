@@ -88,7 +88,7 @@ def _fixture_finalizer():
     """
     Start group "FIXTURE FixtureName TEARDOWN
     """
-    start_github_group(prefix=fixture_type, name=fixture_name, postfix=f'({fixturedef.scope}) TEARDOWN')
+     pytest.grouping_session.start_github_group(prefix=fixture_type, name=fixture_name, postfix=f'({fixturedef.scope}) TEARDOWN')
     
 @pytest.hookimpl(hookwrapper=True, tryfirst=True)
 def pytest_fixture_setup(request, fixturedef) -> None:
