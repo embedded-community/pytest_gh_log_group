@@ -84,6 +84,12 @@ def pytest_runtest_teardown(item) -> None:
     pytest.grouping_session.start_github_group(item.name, prefix="TEST", postfix="TEARDOWN")
 
 
+def _fixture_finalizer():
+    """
+    Start group "FIXTURE FixtureName TEARDOWN
+    """
+    start_github_group(prefix=fixture_type, name=fixture_name, postfix=f'({fixturedef.scope}) TEARDOWN')
+    
 @pytest.hookimpl(hookwrapper=True, tryfirst=True)
 def pytest_fixture_setup(request, fixturedef) -> None:
     """
@@ -98,7 +104,8 @@ def pytest_fixture_setup(request, fixturedef) -> None:
         pmark = param_marks[0]
         if pmark is not None and fixture_name in pmark.args[0].split(','):
             # this "fixture" is a pytest parameterize mark
-            fixture_type = 'PARAMETER'
+            if not pmark.kwargs.get('indirect', False): # check if the parametrize mark is targeting a fixture
+                fixture_type = 'PARAMETER'
             fixture_name = f'{fixture_name} {request_param}'
 
     pytest.grouping_session.start_github_group(prefix=fixture_type,
@@ -108,5 +115,6 @@ def pytest_fixture_setup(request, fixturedef) -> None:
     # yield fixture to insert fixture_finalizer at the
     # end of finalizers list (--> executed first)
     yield
-
+    
+    fixturedef.addfinalizer(_fixture_finalizer)
     pytest.grouping_session.end_github_group()
