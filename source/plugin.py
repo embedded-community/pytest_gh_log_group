@@ -83,12 +83,6 @@ def pytest_runtest_teardown(item) -> None:
     pytest.grouping_session.write_line('')
     pytest.grouping_session.start_github_group(item.name, prefix="TEST", postfix="TEARDOWN")
 
-
-def _fixture_finalizer():
-    """
-    Start group "FIXTURE FixtureName TEARDOWN
-    """
-    pytest.grouping_session.start_github_group(prefix=fixture_type, name=fixture_name, postfix=f'({fixturedef.scope}) TEARDOWN')
     
 @pytest.hookimpl(hookwrapper=True, tryfirst=True)
 def pytest_fixture_setup(request, fixturedef) -> None:
@@ -115,6 +109,13 @@ def pytest_fixture_setup(request, fixturedef) -> None:
     # yield fixture to insert fixture_finalizer at the
     # end of finalizers list (--> executed first)
     yield
-    
+
+    def _fixture_finalizer():
+        """
+        Start group "FIXTURE FixtureName TEARDOWN
+        """
+        pytest.grouping_session.start_github_group(prefix=fixture_type, name=fixture_name,
+                                                   postfix=f'TEARDOWN')
+
     fixturedef.addfinalizer(_fixture_finalizer)
     pytest.grouping_session.end_github_group()
