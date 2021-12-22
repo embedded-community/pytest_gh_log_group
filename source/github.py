@@ -8,7 +8,7 @@ class Github:
         """ Constructor for Github """
         self._reporter = reporter
         # GitHub doesn't support nested grouping so this ensures we do not have any.
-        self._group_activated = False
+        self._active_group = None
 
     def write_command(self, command: str, value: str = "") -> None:
         """ Github command prints"""
@@ -29,14 +29,14 @@ class Github:
 
         value = (prefix + " " + name + " " + postfix).strip(" ")
         self.write_command('group', value)
-        self._group_activated = True
+        self._active_group = value
 
     def end_github_group(self) -> None:
         """
         Ends a log group in Github Actions Log
         """
-        if not self._group_activated:
+        if not self._active_group:
             # GitHub doesn't support nested grouping
             return
-        self.write_command('endgroup')
-        self._group_activated = False
+        self.write_command('endgroup', self._active_group)
+        self._active_group = None

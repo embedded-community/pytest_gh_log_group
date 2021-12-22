@@ -61,7 +61,7 @@ def pytest_runtest_call(item) -> None:
     pytest.grouping_session.start_github_group(item.name, prefix="TEST")
 
 
-@pytest.hookimpl(tryfirst=True)
+@pytest.hookimpl(trylast=True)
 def pytest_runtest_logreport(report: TestReport):  # pylint: disable=unused-argument
     """ end group between tests/setups/teardown phases"""
     pytest.grouping_session.end_github_group()
@@ -87,20 +87,20 @@ def pytest_runtest_teardown(item) -> None:
 @pytest.hookimpl(hookwrapper=True, tryfirst=True)
 def pytest_fixture_setup(request, fixturedef) -> None:
     """
-    Start group "FIXTURE FixtureName"
+    Start group "FIXTURE FixtureName" or "PARAMETER parameter name"
     """
     fixture_type = f'FIXTURE ({fixturedef.scope})'
-    fixture_name = request.fixturename
     request_param = request.param
+    fixture_name = f'{request.fixturename} {request_param}'.strip(' ')
     param_marks = list(filter(lambda m: m.name == 'parametrize',
                               request.node.own_markers))
     if any(param_marks):
         pmark = param_marks[0]
-        if pmark is not None and fixture_name in pmark.args[0].split(','):
-            # this "fixture" is a pytest parameterize mark
-            if not pmark.kwargs.get('indirect', False): # check if the parametrize mark is targeting a fixture
+        if pmark is not None:
+            # this "fixture" is a pytest parametrize mark AND the parametrize mark is not targeting a fixture
+            if fixture_name in pmark.args[0].split(',') and not pmark.kwargs.get('indirect', False):
                 fixture_type = 'PARAMETER'
-            fixture_name = f'{fixture_name} {request_param}'
+
 
     pytest.grouping_session.start_github_group(prefix=fixture_type,
                        name=fixture_name,
@@ -115,7 +115,7 @@ def pytest_fixture_setup(request, fixturedef) -> None:
         Start group "FIXTURE FixtureName TEARDOWN
         """
         pytest.grouping_session.start_github_group(prefix=fixture_type, name=fixture_name,
-                                                   postfix=f'TEARDOWN')
+                                                   postfix='TEARDOWN')
 
     fixturedef.addfinalizer(_fixture_finalizer)
-    pytest.grouping_session.end_github_group()
+
