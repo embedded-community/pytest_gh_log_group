@@ -83,7 +83,7 @@ def pytest_runtest_teardown(item) -> None:
     pytest.grouping_session.write_line('')
     pytest.grouping_session.start_github_group(item.name, prefix="TEST", postfix="TEARDOWN")
 
-    
+
 @pytest.hookimpl(hookwrapper=True, tryfirst=True)
 def pytest_fixture_setup(request, fixturedef) -> None:
     """
@@ -97,8 +97,10 @@ def pytest_fixture_setup(request, fixturedef) -> None:
     if any(param_marks):
         pmark = param_marks[0]
         if pmark is not None:
-            # this "fixture" is a pytest parametrize mark AND the parametrize mark is not targeting a fixture
-            if fixture_name in pmark.args[0].split(',') and not pmark.kwargs.get('indirect', False):
+            # this "fixture" is a pytest parametrize mark
+            # AND the parametrize mark is not targeting a fixture
+            if fixture_name in pmark.args[0].split(',') \
+                    and not pmark.kwargs.get('indirect', False):
                 fixture_type = 'PARAMETER'
 
 
@@ -118,4 +120,3 @@ def pytest_fixture_setup(request, fixturedef) -> None:
                                                    postfix='TEARDOWN')
 
     fixturedef.addfinalizer(_fixture_finalizer)
-
