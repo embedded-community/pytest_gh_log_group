@@ -79,7 +79,6 @@ def pytest_runtest_teardown(item) -> None:
     """
     Start group "TEST TestName TEARDOWN"
     """
-    pytest.grouping_session.write_line('')
     pytest.grouping_session.start_github_group(item.name, prefix="TEST", postfix="TEARDOWN")
 
 
