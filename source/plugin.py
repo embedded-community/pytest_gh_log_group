@@ -91,7 +91,7 @@ def pytest_fixture_setup(request, fixturedef) -> None:
     """
     fixture_type = f'FIXTURE ({fixturedef.scope})'
     fixture_name = request.fixturename
-    request_param = request.param
+    request_param = request.param if hasattr(request, 'param') else ''
     param_marks = list(filter(lambda m: m.name == 'parametrize',
                               request.node.own_markers))
     if any(param_marks):
