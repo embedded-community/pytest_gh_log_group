@@ -1,5 +1,5 @@
 [![ci](https://github.com/embedded-community/pytest_gh_log_group/actions/workflows/push.yml/badge.svg)](https://github.com/embedded-community/pytest_gh_log_group/actions/workflows/push.yml)
-[![PyPI version](https://badge.fury.io/py/pytest_gh_log_group.svg)](https://pypi.org/project/pytest_gh_log_group/)
+[![PyPI version](https://badge.fury.io/py/pytest-gh-log-group.svg)](https://pypi.org/project/pytest-gh-log-group/)
 
 
 ## pytest github log grouping plugin
