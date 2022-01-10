@@ -106,6 +106,9 @@ def pytest_fixture_setup(request, fixturedef) -> None:
                        name=fixture_name,
                        postfix='SETUP')
 
+    # insert "end group" finalizer to _finalizer list: index 0 (--> executed last)
+    fixturedef._finalizers.insert(0, pytest.grouping_session.end_github_group) # pylint: disable=protected-access
+
     # yield fixture to insert fixture_finalizer at the
     # end of finalizers list (--> executed first)
     yield
