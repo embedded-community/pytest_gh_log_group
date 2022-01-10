@@ -18,8 +18,6 @@ class Github:
     def write_line(self, data: str):
         """ write line using reporter """
         if self._reporter:
-            if data and data[-1] is not '\n':
-                data += '\n'
             self._reporter.write_ensure_prefix(prefix='', extra=data, flush=True)
 
 
