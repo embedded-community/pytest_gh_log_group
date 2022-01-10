@@ -21,9 +21,8 @@ def pytest_addoption(parser: Parser) -> None:
         "--gh_log_group",
         action="store_true",
         dest="gh_log_group",
-        default=_strtobool(os.getenv('GITHUB_ACTIONS')),
-        help="Time in milliseconds when the print was invoked, "
-             "relative to the time the fixture was created.",
+        default=_strtobool(os.getenv('GITHUB_ACTIONS', "False")),
+        help="Enable Github Actions log grouping",
     )
 
 
