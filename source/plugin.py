@@ -99,7 +99,7 @@ def pytest_fixture_setup(request, fixturedef) -> None:
         if pmark is not None:
             # this "fixture" is a pytest parametrize mark
             # AND the parametrize mark is not targeting a fixture
-            if fixture_name in pmark.args[0].split(',') \
+            if request.fixturename in pmark.args[0].split(',') \
                     and not pmark.kwargs.get('indirect', False):
                 fixture_type = 'PARAMETER'
 
