@@ -89,6 +89,9 @@ def pytest_fixture_setup(request, fixturedef) -> None:
     """
     Start group "FIXTURE FixtureName"
     """
+    # all pytest fixtures might not have request.param:
+    if not hasattr(request, 'param'):
+        request.param = ''
     fixture_type = f'FIXTURE ({fixturedef.scope})'
     fixture_name = request.fixturename
     request_param = request.param
