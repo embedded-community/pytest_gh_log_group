@@ -40,49 +40,55 @@ def create(config: Config) -> Github:
     return Github(reporter=None)
 
 
-@pytest.hookimpl(tryfirst=True)
+@pytest.hookimpl(tryfirst=True, hookwrapper=True)
 def pytest_collection(session: Session):  # pylint: disable=unused-argument
     """ Start files/folders collection"""
     pytest.grouping_session.start_github_group('collector')
+    yield
 
 
-@pytest.hookimpl(trylast=True)
+@pytest.hookimpl(trylast=True, hookwrapper=True)
 def pytest_collection_finish(session):  # pylint: disable=unused-argument
     """ Collection finish """
+    yield
     pytest.grouping_session.end_github_group()
 
 
-@pytest.hookimpl(tryfirst=True)
+@pytest.hookimpl(tryfirst=True, hookwrapper=True)
 def pytest_runtest_call(item) -> None:
     """
     Start group "TestName TEST"
     """
     pytest.grouping_session.start_github_group(item.name, prefix="TEST")
+    yield
 
 
-@pytest.hookimpl(trylast=True)
+@pytest.hookimpl(trylast=True, hookwrapper=True)
 def pytest_runtest_logreport(report: TestReport):  # pylint: disable=unused-argument
     """ end group between tests/setups/teardown phases"""
     pytest.grouping_session.end_github_group()
+    yield
 
 
-@pytest.hookimpl(tryfirst=True)
+@pytest.hookimpl(tryfirst=True, hookwrapper=True)
 def pytest_runtest_setup(item) -> None:
     """
     Start group "TEST TestName SETUP"
     """
     pytest.grouping_session.start_github_group(item.name, prefix="TEST", postfix="SETUP")
+    yield
 
 
-@pytest.hookimpl(tryfirst=True)
+@pytest.hookimpl(tryfirst=True, hookwrapper=True)
 def pytest_runtest_teardown(item) -> None:
     """
     Start group "TEST TestName TEARDOWN"
     """
     pytest.grouping_session.start_github_group(item.name, prefix="TEST", postfix="TEARDOWN")
+    yield
 
 
-@pytest.hookimpl(hookwrapper=True, tryfirst=True)
+@pytest.hookimpl(tryfirst=True, hookwrapper=True)
 def pytest_fixture_setup(request, fixturedef) -> None:
     """
     Start group "FIXTURE FixtureName" or "PARAMETER parameter name"
@@ -107,9 +113,6 @@ def pytest_fixture_setup(request, fixturedef) -> None:
                        name=fixture_name,
                        postfix='SETUP')
 
-    # insert "end group" finalizer to _finalizer list: index 0 (--> executed last)
-    fixturedef._finalizers.insert(0, pytest.grouping_session.end_github_group) # pylint: disable=protected-access
-
     # yield fixture to insert fixture_finalizer at the
     # end of finalizers list (--> executed first)
     yield
@@ -122,3 +125,6 @@ def pytest_fixture_setup(request, fixturedef) -> None:
                                                    postfix='TEARDOWN')
 
     fixturedef.addfinalizer(_fixture_finalizer)
+
+    # insert "end group" finalizer to _finalizer list: index 0 (--> executed last)
+    fixturedef._finalizers.insert(0, pytest.grouping_session.end_github_group) # pylint: disable=protected-access
