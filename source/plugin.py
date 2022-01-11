@@ -53,6 +53,12 @@ def pytest_collection_finish(session):  # pylint: disable=unused-argument
     yield
     pytest.grouping_session.end_github_group()
 
+@pytest.hookimpl(trylast=True, hookwrapper=True)
+def pytest_sessionfinish(session):  # pylint: disable=unused-argument
+    """ Session finish """
+    yield
+    pytest.grouping_session.end_github_group()
+
 
 @pytest.hookimpl(tryfirst=True, hookwrapper=True)
 def pytest_runtest_call(item) -> None:
