@@ -21,9 +21,4 @@ activated by env variable: `GITHUB_ACTIONS`. By default, GitHub action have this
 
 ### NOTE
 
-GitHub does not currently support nesting groups.
-
-pytest prints outcome letters (.sxFE) by default, and it can't be turned off. 
-This behaviour causes conflict with GitHub grouping functionality and this library 
-not yet solve conflict perfectly. 
-However, pytest can be customized in many ways, including the outcome printing which potentially solves this conflict.
+GitHub does not currently support nested groups, see https://github.com/actions/runner/issues/802.
