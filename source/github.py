@@ -27,7 +27,7 @@ class Github:
         Starts a log group in Github Actions Log
         """
         self.end_github_group()  # GitHub doesn't support nested grouping
-        value = (prefix + " " + name + " " + postfix).strip(" ")
+        value = f'{prefix} {name} {postfix}'.strip(" ")
         self.write_command('group', value)
         self._active_group = value
 
