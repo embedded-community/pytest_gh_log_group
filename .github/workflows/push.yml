@@ -19,15 +19,16 @@ jobs:
         os: [ubuntu-latest, windows-latest, macos-latest]
         python-version: ['3.7', '3.8', '3.8', '3.9', '3.10']
         include:
-          - os: ubuntu-latest
+          - extra_opts: -v
+            os: ubuntu-latest
             python-version: '3.10'
-            extra_opts: -v
-          - os: ubuntu-latest
+          - extra_opts: -q
+            os: ubuntu-latest
             python-version: '3.10'
-            extra_opts: -q
-          - os: ubuntu-latest
+          - extra_opts: --emoji
+            os: ubuntu-latest
             python-version: '3.10'
-            extra_opts: --emoji
+
     steps:
       - uses: actions/checkout@v2
       - name: Set up Python
@@ -42,7 +43,7 @@ jobs:
       - name: run tests
         env:
           GITHUB_ACTIONS: 1
-          EXTRA_OPTS: $(( matrix.extra_opts ))
+          EXTRA_OPTS: ${{ matrix.extra_opts }}
         run: python -m pytest -s --no-header --cov source --cov-report=html . $EXTRA_OPTS
       - name: pylint
         run: pylint source
