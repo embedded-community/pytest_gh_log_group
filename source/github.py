@@ -18,7 +18,8 @@ class Github:
     def write_line(self, data: str):
         """ write line using reporter """
         if self._reporter:
-            self._reporter.write_ensure_prefix(prefix='', extra=data, flush=True)
+            self._reporter.ensure_newline()
+            self._reporter.write_line(data, flush=True) ## write_ensure_prefix(prefix='', extra=data, flush=True)
 
 
     def start_github_group(self, name: str, prefix="", postfix="") -> None:
