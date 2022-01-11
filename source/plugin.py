@@ -69,12 +69,11 @@ def pytest_runtest_call(item) -> None:
     yield
 
 
-@pytest.hookimpl(tryfirst=True, hookwrapper=True)
+@pytest.hookimpl(trylast=True, hookwrapper=True)
 def pytest_runtest_logreport(report: TestReport):  # pylint: disable=unused-argument
     """ end group between tests/setups/teardown phases"""
-    pytest.grouping_session.end_github_group()
     yield
-
+    pytest.grouping_session.end_github_group()
 
 
 @pytest.hookimpl(tryfirst=True, hookwrapper=True)
