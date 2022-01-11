@@ -23,11 +23,11 @@ jobs:
             python-version: '3.10'
             extra_opts: -v
           - os: ubuntu-latest
-              python-version: '3.10'
-              extra_opts: -q
+            python-version: '3.10'
+            extra_opts: -q
           - os: ubuntu-latest
-              python-version: '3.10'
-              extra_opts: --emoji
+            python-version: '3.10'
+            extra_opts: --emoji
     steps:
       - uses: actions/checkout@v2
       - name: Set up Python
