@@ -88,8 +88,8 @@ def pytest_fixture_setup(request, fixturedef) -> None:
     Start group "FIXTURE FixtureName" or "PARAMETER parameter name"
     """
     fixture_type = f'FIXTURE ({fixturedef.scope})'
-    fixture_name = f'{request.fixturename} {request_param}'.strip(' ')
     request_param = request.param if hasattr(request, 'param') else ''
+    fixture_name = f'{request.fixturename} {request_param}'.strip(' ')
 
     param_marks = list(filter(lambda m: m.name == 'parametrize',
                               request.node.own_markers))
