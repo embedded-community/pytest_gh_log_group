@@ -46,6 +46,7 @@ setup(
     packages=find_packages(exclude=['tests']),
     keywords="py.test pytest github actions log grouping",
     python_requires='>=3.7, <4',
+    package_dir={'': 'source'},
     entry_points={
         'pytest11': ['pytest_gh_log_group = source.plugin']
     },
